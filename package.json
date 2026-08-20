@@ -1,0 +1,13 @@
+{
+  "name": "hh3d-stremio-addon",
+  "version": "1.0.0",
+  "description": "Stremio addon parser for hoathinh3d.so",
+  "main": "addon.js",
+  "type": "commonjs",
+  "scripts": {"start": "node addon.js"},
+  "dependencies": {
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
+    "stremio-addon-sdk": "^1.6.10"
+  }
+}
