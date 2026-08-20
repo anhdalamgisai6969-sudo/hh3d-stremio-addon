@@ -26,52 +26,58 @@ function decodeMovieId(id) {
 }
 async function getHTML(url) {
   return (await http.get(url)).data;
-}
 
 function parseCards(html) {
   const $ = cheerio.load(html);
+
   const results = [];
   const seen = new Set();
 
   $("a").each((_, a) => {
+
     const el = $(a);
+
     const href = absoluteUrl(el.attr("href"));
-    if (!href || seen.has(href)) return;
+
+    if (!href) return;
+
+    if (!href.includes("hoathinh3d.vn")) return;
+
+    if (seen.has(href)) return;
 
     const img = el.find("img").first();
-    let name =
-      cleanText(el.find("h1,h2,h3,h4,.title,.name").first().text()) ||
-      cleanText(el.attr("title")) ||
-      cleanText(img.attr("alt")) ||
-      cleanText(el.text());
 
-    if (!name || name.length > 150) return;
-    if (!/hoathinh3d\.so/.test(href)) return;
+    let name =
+      cleanText(
+        el.find("h1,h2,h3,h4,.title,.name").first().text()
+      ) ||
+      cleanText(el.attr("title")) ||
+      cleanText(img.attr("alt"));
+
+    if (!name) return;
+
+    if (name.length > 150) return;
 
     const poster = absoluteUrl(
-      img.attr("data-src") || img.attr("data-original") || img.attr("src")
+      img.attr("data-src") ||
+      img.attr("data-original") ||
+      img.attr("src")
     );
-seen.add(href);
-
-results.push({
-  id: idFromUrl(href),
-  type: "series",
-  name,
-  poster
-});
-    
 
     seen.add(href);
+
     results.push({
       id: idFromUrl(href),
       type: "series",
-      name,
-      poster
+      name: name,
+      poster: poster
     });
-  });
-  return results;
-}
 
+  });
+
+  return results.slice(0, 100);
+}
+  
 async function getHome(page = 1) {
   const urls = page === 1
     ? [BASE_URL + "/"]
@@ -85,13 +91,7 @@ async function getHome(page = 1) {
       console.error("Home failed:", url, e.message);
     }
   }
-  return [];
-}
-
-async function searchMovies(query) {
-  const urls = [
-    `${BASE_URL}/?s=${encodeURIComponent(query)}`,
-    `${BASE_URL}/search/${encodeURIComponent(query)}`,
+  ret_URL}/search/${encodeURIComponent(query)}`,
     `${BASE_URL}/tim-kiem/${encodeURIComponent(query)}`
   ];
 
