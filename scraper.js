@@ -1,7 +1,7 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 
-const BASE_URL = "https://hoathinh3d.so";
+const BASE_URL = "https://hoathinh3d.vn";
 
 const http = axios.create({
   timeout: 20000,
@@ -51,9 +51,15 @@ function parseCards(html) {
     const poster = absoluteUrl(
       img.attr("data-src") || img.attr("data-original") || img.attr("src")
     );
+seen.add(href);
 
-    // Loại link rõ ràng là tập xem trực tiếp khỏi catalog.
-    if (/tap-\d+/i.test(href)) return;
+results.push({
+  id: idFromUrl(href),
+  type: "series",
+  name,
+  poster
+});
+    
 
     seen.add(href);
     results.push({
